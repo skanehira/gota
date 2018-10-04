@@ -78,7 +78,6 @@ func New() *App {
 }
 
 func (app *App) Run() error {
-	common.Init()
 
 	for {
 
@@ -109,7 +108,6 @@ func (app *App) Run() error {
 			return err
 		}
 
-		common.CallClear()
 	}
 }
 

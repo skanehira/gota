@@ -11,18 +11,18 @@ import (
 )
 
 func OpenURL(url string) error {
-	var cmd string
+	var cmd *exec.Cmd
 
 	switch runtime.GOOS {
 	case "darwin":
-		cmd = "open"
+		cmd = exec.Command("open", url)
 	case "windows":
-		cmd = "start"
+		cmd = exec.Command("cmd", "/c", "start", url)
 	default:
 		return fmt.Errorf("Unsupport open OS:%s, Please open the URL manually: %s", runtime.GOOS, url)
 	}
 
-	return exec.Command(cmd, url).Run()
+	return cmd.Run()
 }
 
 func IsPromptQuit(err error) bool {
