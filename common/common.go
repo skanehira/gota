@@ -19,7 +19,8 @@ func OpenURL(url string) error {
 	case "windows":
 		cmd = exec.Command("cmd", "/c", "start", url)
 	default:
-		return fmt.Errorf("Unsupport open OS:%s, Please open the URL manually: %s", runtime.GOOS, url)
+		fmt.Printf("Unsupport open OS:%s, Please open the URL manually: %s\n", runtime.GOOS, url)
+		return nil
 	}
 
 	return cmd.Run()
