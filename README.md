@@ -21,3 +21,6 @@ go get -u github.com/skanehira/gota
 docker run --rm -it skanehira/gota
 ```
 
+## Screenshots
+![](https://github.com/skanehira/gota/blob/images/images/search.png)
+![](https://github.com/skanehira/gota/blob/images/images/result.png)
