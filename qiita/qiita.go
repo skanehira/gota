@@ -75,5 +75,9 @@ func (q *Qiita) SearchItems(cond *SearchCondition) (Result, error) {
 
 	items, err := q.ListItems(ctx, cond.Page, cond.PerPage, query)
 
-	return Result{*items}, err
+	if err != nil {
+		return Result{}, err
+	}
+
+	return Result{*items}, nil
 }

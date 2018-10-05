@@ -7,4 +7,4 @@ docker build -t skanehira/gota .
 docker rmi $(docker images --filter "dangling=true" -aq)
 
 # push image to dockerr hub
-docker push skanehira/gota
+docker push skanehira/gota:latest
