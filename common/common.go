@@ -1,7 +1,6 @@
 package common
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -19,7 +18,6 @@ func OpenURL(url string) error {
 	case "windows":
 		cmd = exec.Command("cmd", "/c", "start", url)
 	default:
-		fmt.Printf("Unsupport open OS:%s, Please open the URL manually: %s\n", runtime.GOOS, url)
 		return nil
 	}
 

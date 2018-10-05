@@ -139,18 +139,22 @@ func (app *App) selecter(result qiita.Result) error {
 	app.Selecter.Items = result.Items
 	app.Selecter.Result = result
 
-	i, _, err := app.Selecter.Run()
+	for {
 
-	if common.IsSelectQuit(err) {
-		return err
-	}
+		i, _, err := app.Selecter.Run()
 
-	if err != promptui.ErrInterrupt {
+		if common.IsSelectQuit(err) {
+			return err
+		}
+
+		if err == promptui.ErrInterrupt {
+			return nil
+		}
 		if err := common.OpenURL(result.Items[i].Url); err != nil {
 			fmt.Printf("open failed: %s", err)
 			return err
 		}
-	}
 
+	}
 	return nil
 }
