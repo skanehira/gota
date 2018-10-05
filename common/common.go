@@ -1,7 +1,10 @@
 package common
 
 import (
+	"bufio"
+	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"runtime"
@@ -10,18 +13,53 @@ import (
 )
 
 func OpenURL(url string) error {
-	var cmd *exec.Cmd
-
 	switch runtime.GOOS {
 	case "darwin":
-		cmd = exec.Command("open", url)
+		return exec.Command("open", url).Run()
 	case "windows":
-		cmd = exec.Command("cmd", "/c", "start", url)
-	default:
-		return nil
+		return exec.Command("cmd", "/c", "start", url).Run()
 	}
 
-	return cmd.Run()
+	return nil
+}
+
+func DownloadMardownFile(url string) (string, error) {
+	res, err := http.Get(url + ".md")
+	if err != nil {
+		return "", err
+	}
+	defer res.Body.Close()
+
+	file, err := os.Create("tmp.md")
+	if err != nil {
+		return "", err
+	}
+
+	defer file.Close()
+
+	_, err = io.Copy(file, res.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return file.Name(), nil
+}
+
+func RemoveFile(file string) error {
+	return os.Remove(file)
+}
+
+func ViewMarkdown(file string) error {
+	defer RemoveFile(file)
+	md, err := exec.Command("mdcat", file).Output()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(md))
+	bufio.NewScanner(os.Stdin).Scan()
+
+	return nil
 }
 
 func IsPromptQuit(err error) bool {
@@ -43,33 +81,5 @@ func IsSelectQuit(err error) bool {
 		return false
 	default:
 		return true
-	}
-}
-
-var clear map[string]func() //create a map for storing clear funcs
-
-func Init() {
-	clear = make(map[string]func())
-	clear["linux"] = func() {
-		cmd := exec.Command("clear")
-		cmd.Stdout = os.Stdout
-		cmd.Run()
-	}
-	clear["darwin"] = func() {
-		cmd := exec.Command("clear")
-		cmd.Stdout = os.Stdout
-		cmd.Run()
-	}
-	clear["windows"] = func() {
-		cmd := exec.Command("cmd", "/c", "cls")
-		cmd.Stdout = os.Stdout
-		cmd.Run()
-	}
-}
-
-func CallClear() {
-	clear, ok := clear[runtime.GOOS]
-	if ok {
-		clear()
 	}
 }

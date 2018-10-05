@@ -48,17 +48,16 @@ func New() *App {
 				Active:   `{{ .Title | red }}`,
 				Inactive: ` {{ .Title | cyan }}`,
 				Selected: `{{ .Title | yellow }} {{ .Url | green}}`,
-				Details: `
---------- Details ----------
-{{ "URL:" }}	{{ .Url }}
-{{ "Created:" }}	{{ .CreatedAt }}
-{{ "Updated:" }}	{{ .UpdatedAt }}
-{{ "User:" }}	{{ .User.Id }}
-{{ "Tags:" }}	{{range .Tags }}{{.Name}} {{end}}
+				Details: `--------- Details ----------
+{{ "URL:" | green }}	{{ .Url | green }}
+{{ "Created:" | blue }}	{{ .CreatedAt | blue }}
+{{ "Updated:" | yellow }}	{{ .UpdatedAt | yellow }}
+{{ "User:" | red }}	{{ .User.Id | red }}
+{{ "Tags:" | cyan }}	{{ range .Tags }}{{ .Name | cyan }} {{end}}
 
 `,
 			},
-			Size: 15,
+			Size: 20,
 		},
 	}
 
@@ -140,7 +139,6 @@ func (app *App) selecter(result qiita.Result) error {
 	app.Selecter.Result = result
 
 	for {
-
 		i, _, err := app.Selecter.Run()
 
 		if common.IsSelectQuit(err) {
@@ -150,11 +148,58 @@ func (app *App) selecter(result qiita.Result) error {
 		if err == promptui.ErrInterrupt {
 			return nil
 		}
-		if err := common.OpenURL(result.Items[i].Url); err != nil {
+
+		if err := app.confirm(result.Items[i].Url); err != nil {
+			return err
+		}
+	}
+}
+
+func (app *App) confirm(url string) error {
+	result := []struct {
+		Selected string
+	}{
+		{"browser"},
+		{"terminal"},
+	}
+
+	confirm := promptui.Select{
+		Label: "Open browser or display terminal?",
+		Templates: &promptui.SelectTemplates{
+			Label:    `{{ . }}`,
+			Active:   `{{ .Selected | red }}`,
+			Inactive: ` {{ .Selected | cyan }}`,
+			Selected: ` `,
+		},
+		Items: result,
+		Size:  2,
+	}
+
+	i, _, err := confirm.Run()
+
+	if common.IsSelectQuit(err) {
+		return err
+	}
+
+	if err == promptui.ErrInterrupt {
+		return nil
+	}
+
+	switch result[i].Selected {
+	case "browser":
+		if err := common.OpenURL(url); err != nil {
+			fmt.Printf("open failed: %s", err)
+			return err
+		}
+	case "terminal":
+		file, err := common.DownloadMardownFile(url)
+		if err != nil {
 			fmt.Printf("open failed: %s", err)
 			return err
 		}
 
+		return common.ViewMarkdown(file)
 	}
+
 	return nil
 }
