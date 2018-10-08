@@ -7,6 +7,7 @@ Search Qiita.com and open browser on terminal
 ## Support open brwoser
 - Mac OS
 - Windows
+- Linux
 
 ## Installtion
 ```
