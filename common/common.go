@@ -18,6 +18,8 @@ func OpenURL(url string) error {
 		return exec.Command("open", url).Run()
 	case "windows":
 		return exec.Command("cmd", "/c", "start", url).Run()
+	case "linux":
+		return exec.Command("xdg-open", url).Run()
 	}
 
 	return nil
