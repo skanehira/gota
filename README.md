@@ -11,7 +11,6 @@ Search Qiita.com and open browser on terminal
 
 ## Installtion
 ```
-go get -u github.com/samfoo/mdcat
 go get -u github.com/skanehira/gota
 ```
 

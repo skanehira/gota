@@ -149,13 +149,14 @@ func (app *App) selecter(result qiita.Result) error {
 			return nil
 		}
 
-		if err := app.confirm(result.Items[i].Url); err != nil {
+		item := result.Items[i]
+		if err := app.confirm(item.Url, item.Body); err != nil {
 			return err
 		}
 	}
 }
 
-func (app *App) confirm(url string) error {
+func (app *App) confirm(url string, body string) error {
 	result := []struct {
 		Selected string
 	}{
@@ -192,13 +193,7 @@ func (app *App) confirm(url string) error {
 			return err
 		}
 	case "terminal":
-		file, err := common.DownloadMardownFile(url)
-		if err != nil {
-			fmt.Printf("open failed: %s", err)
-			return err
-		}
-
-		return common.ViewMarkdown(file)
+		return common.ViewTerminal(body)
 	}
 
 	return nil
