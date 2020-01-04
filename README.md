@@ -1,26 +1,26 @@
-# gota - Qiita cli with Go
+# gota
+QiitaのCLIツールです。
+記事のタイトルを検索してターミナルもしくはブラウザで記事を閲覧できます。
 
-## About gota
-This is Qiita.com cli tool.
-Search Qiita.com and open browser on terminal
+![](https://i.imgur.com/J87t15v.gif)
 
-## Support open brwoser
+## サポートOS
 - Mac OS
 - Windows
 - Linux
 
-## Installtion
+## インストール
 ```
-go get -u github.com/skanehira/gota
+$ git clone https://github.com/skanehira/gota
+$ go install
 ```
 
-## Use on Docker
-※docker not support open browser
+## Dockerを使う
+docker not support open browser
 
 ```
 docker run --rm -it skanehira/gota
 ```
 
-## Screenshots
-![](https://github.com/skanehira/gota/blob/images/images/search.png)
-![](https://github.com/skanehira/gota/blob/images/images/result.png)
+# Author
+skanehira
