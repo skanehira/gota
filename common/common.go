@@ -1,13 +1,13 @@
 package common
 
 import (
-	"fmt"
 	"io"
 	"os/exec"
 	"runtime"
 
+	"github.com/awesome-gocui/gocui"
 	"github.com/manifoldco/promptui"
-	"github.com/rivo/tview"
+	"github.com/pkg/errors"
 )
 
 func OpenURL(url string) error {
@@ -24,16 +24,20 @@ func OpenURL(url string) error {
 }
 
 func ViewTerminal(body string) error {
-	app := tview.NewApplication()
-	textView := tview.NewTextView().
-		SetDynamicColors(true).
-		SetRegions(true).
-		SetWordWrap(true)
+	g, err := gocui.NewGui(gocui.OutputNormal, false)
+	if err != nil {
+		return errors.Wrap(err, "error starting the interactive UI")
+	}
+	defer g.Close()
 
-	fmt.Fprintf(textView, "%s ", body)
+	ui, err := newUi(g)
+	if err != nil {
+		return err
+	}
 
-	textView.SetBorder(true)
-	if err := app.SetRoot(textView, true).Run(); err != nil {
+	ui.setContent(body)
+
+	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		return err
 	}
 
